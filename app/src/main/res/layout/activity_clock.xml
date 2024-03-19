@@ -7,9 +7,11 @@
 
     <com.example.clockview.presentation.common.MyClockView
         android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_height="400dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:clockColor="@color/purple_200"
+        app:secondsHandColor="#CC12AE"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,10 +7,12 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.icu.util.Calendar
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
+import com.example.clockview.R
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -31,15 +33,34 @@ class MyClockView
     private val hours = List(12) { it + 1 }
     private var paint = Paint()
     private val rect = Rect()
+    private var clockColor = 0
+    private var secondsHandColor = 0
     private lateinit var calendar: Calendar
     private var isInit = false
 
     init {
+        attributeSet?.let { initAttrs(it) }
         fontSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_SP,
             14f,
             resources.displayMetrics
         ).toInt()
+    }
+
+    private fun initAttrs(attributeSet: AttributeSet) {
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.MyClockView)
+        try {
+            clockColor = typedArray.getColor(
+                R.styleable.MyClockView_clockColor,
+                Color.WHITE
+            )
+            secondsHandColor = typedArray.getColor(
+                R.styleable.MyClockView_secondsHandColor,
+                Color.YELLOW
+            )
+        } finally {
+            typedArray.recycle()
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -49,7 +70,7 @@ class MyClockView
             isInit = true
         }
         paint.reset()
-        paint.color = Color.WHITE
+        paint.color = clockColor
         setupClockBody(canvas)
         drawTime(canvas)
         postInvalidateDelayed(500)
@@ -107,7 +128,7 @@ class MyClockView
             TimeType.Minute -> handRadius = radius - minuteHandTruncation
             TimeType.Second -> {
                 handRadius = radius - minuteHandTruncation
-                paint.color = Color.YELLOW
+                paint.color = secondsHandColor
             }
         }
         canvas.drawLine(
@@ -117,6 +138,14 @@ class MyClockView
             (height / 2 + sin(angle) * handRadius).toFloat(),
             paint
         )
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        return super.onSaveInstanceState()
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        super.onRestoreInstanceState(state)
     }
 
     enum class TimeType {
